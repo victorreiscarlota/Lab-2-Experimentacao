@@ -2,7 +2,7 @@
 
 **Curso:** Engenharia de Software  
 **Disciplina:** Laboratório de Experimentação de Software  
-**Professor:** Danilo 
+**Professor:** Danilo  
 **Período:** 6º  
 **Equipe:** Victor Reis Carlota e Luís Felipe Brescia  
 
@@ -30,21 +30,20 @@
 
 ## Resumo
 
-Este relatório apresenta uma análise empírica sobre a relação entre características do processo de desenvolvimento (popularidade, maturidade, tamanho) e atributos de qualidade interna de repositórios Java open-source no GitHub. Utilizando métricas estáticas extraídas com a ferramenta CK e dados de processo coletados via API, buscamos responder questões sobre como esses fatores se correlacionam e que implicações podem ter para a engenharia de software.
+Este relatório apresenta uma análise profunda sobre como as características do processo de desenvolvimento — popularidade, maturidade, atividade e tamanho — influenciam atributos de qualidade interna em projetos Java open-source hospedados no GitHub. Usando métricas extraídas pela ferramenta CK e dados coletados via API, buscamos responder como essas variáveis se relacionam e levantamos hipóteses sobre sua influência, além de discutir implicações práticas e filosóficas para a Engenharia de Software.
 
 ---
 
 ## Introdução
 
-A evolução colaborativa de sistemas open-source traz desafios para a gestão dos atributos de qualidade interna, como modularidade, manutenibilidade e legibilidade. No contexto de projetos Java hospedados no GitHub, surge a necessidade de compreender como práticas de desenvolvimento e características do processo se relacionam com métricas clássicas de qualidade de software.  
-Este estudo examina 1.000 dos repositórios Java mais populares, correlacionando dados de processo e métricas de qualidade para responder quatro questões de pesquisa centrais:
+A dinâmica colaborativa dos sistemas open-source impõe desafios significativos à manutenção da qualidade interna do software, especialmente em relação à modularidade, manutenibilidade e legibilidade. Em repositórios Java do GitHub, onde o código evolui de forma coletiva e distribuída, torna-se fundamental entender como práticas e características do processo impactam métricas clássicas de qualidade. Este estudo analisa 1.000 dos repositórios Java mais populares, buscando respostas para quatro questões centrais:
 
 - **RQ 01:** Qual a relação entre a popularidade dos repositórios e suas características de qualidade?
 - **RQ 02:** Qual a relação entre a maturidade dos repositórios e suas características de qualidade?
 - **RQ 03:** Qual a relação entre a atividade dos repositórios e suas características de qualidade?
 - **RQ 04:** Qual a relação entre o tamanho dos repositórios e suas características de qualidade?
 
-Além da análise estatística, buscamos apresentar reflexões filosóficas e matemáticas sobre os resultados, indo além de uma análise puramente técnica.
+Além da análise estatística, exploramos reflexões filosóficas e matemáticas, integrando diversos olhares para além do técnico.
 
 ---
 
@@ -52,38 +51,39 @@ Além da análise estatística, buscamos apresentar reflexões filosóficas e ma
 
 ### 3.1 Seleção de Repositórios
 
-Selecionamos os 1.000 repositórios Java mais populares do GitHub, utilizando critérios de idioma e ordenação por número de estrelas (popularidade). Essa seleção visa garantir a relevância e diversidade dos sistemas analisados.
+O primeiro passo consistiu na seleção dos 1.000 repositórios Java mais populares do GitHub, utilizando filtros de idioma e ordenação por número de estrelas. Essa estratégia buscou garantir que a amostra fosse representativa, diversa e relevante, incluindo desde projetos amplamente adotados pela comunidade até exemplos menos conhecidos, mas tecnicamente significativos.
 
 ### 3.2 Coleta de Dados e Métricas
 
-Para cada repositório, coletamos:
+Para cada repositório, extraímos variáveis de processo e métricas de qualidade. As métricas CK adotadas são amplamente reconhecidas por sua capacidade de capturar aspectos essenciais do design orientado a objetos:
 
-- **Popularidade:** número de estrelas no GitHub.
-- **Maturidade:** idade do repositório (anos desde o primeiro commit).
-- **Tamanho:** linhas de código (LOC) e linhas de comentários.
-- **Qualidade:** métricas CK - CBO (Coupling Between Objects), DIT (Depth Inheritance Tree), LCOM (Lack of Cohesion of Methods).
+- **Popularidade:** número de estrelas, um indicativo de reconhecimento e adoção.
+- **Maturidade:** idade do repositório, medida em anos desde o primeiro commit.
+- **Tamanho:** linhas de código (LOC) e linhas de comentários, como proxy da complexidade.
+- **CBO (Coupling Between Objects):** Representa o grau de acoplamento entre as classes do sistema, ou seja, quantas outras classes cada classe está diretamente conectada. Um alto valor de CBO indica que o sistema possui dependências complexas, o que pode dificultar a manutenção e evolução do código.
+- **DIT (Depth of Inheritance Tree):** Mede a profundidade da árvore de herança para cada classe, ou seja, quantos níveis de herança existem desde a raiz até a classe. Valores elevados de DIT podem indicar maior reutilização de código por herança, mas também aumentam a complexidade e o risco de efeitos colaterais em alterações.
+- **LCOM (Lack of Cohesion of Methods):** Indica o grau de coesão dos métodos dentro das classes. Um valor alto de LCOM significa que os métodos de uma classe têm pouca relação entre si, sugerindo baixa coesão, o que dificulta a manutenção e pode sinalizar oportunidades de refatoração.
 
-Os dados de processo foram obtidos via API REST do GitHub. As métricas de qualidade foram extraídas utilizando a ferramenta CK, que processa o código fonte e gera arquivos `.csv` para cada repositório.
+A coleta foi feita via scripts Python utilizando a API REST do GitHub e a ferramenta CK, que gera arquivos `.csv` com métricas detalhadas por repositório.
 
 ### 3.3 Abordagem Computacional e Desafios
 
-A automação envolveu o desenvolvimento de scripts em Python para baixar, extrair, processar e sumarizar as métricas dos repositórios.  
-**Desafios enfrentados:**
-- Alto volume de dados: processar 1.000 repositórios exigiu automação robusta e controle de erros.
-- Diversidade estrutural dos projetos: diferentes padrões de organização dos arquivos dificultaram a padronização da coleta.
-- Métricas ausentes: alguns projetos não continham arquivos Java ou as métricas esperadas, exigindo tratamento de exceções.
-- Dispersão dos dados: muitos repositórios apresentaram valores extremos (outliers), tornando necessária a aplicação de logaritmos para análise gráfica e correlação.
+A execução do estudo impôs barreiras técnicas e metodológicas que exigiram adaptações e refinamentos constantes. O volume de dados, por si só, tornou necessário o desenvolvimento de rotinas automáticas robustas para download, extração, análise e sumarização dos dados. Muitos repositórios apresentavam estruturas de diretórios e arquivos distintas, demandando estratégias flexíveis de identificação dos arquivos Java e tratamento de exceções para casos de métricas ausentes.
+
+Além disso, a dispersão dos dados — marcada por outliers e distribuições assimétricas — exigiu o uso de transformações logarítmicas para variáveis como estrelas, idade e LOC, permitindo uma análise gráfica e estatística mais precisa. Para cada repositório, calculamos medidas centrais (média, mediana e desvio padrão) das métricas de qualidade, proporcionando uma visão estatística confiável sobre o comportamento dos projetos analisados.
 
 ---
 
 ## Hipóteses
 
-Antes da análise dos dados, elaboramos as seguintes hipóteses informais:
+A pesquisa foi guiada por hipóteses desenvolvidas a partir de um olhar crítico sobre a literatura e prática em Engenharia de Software:
 
-- **Popularidade x Qualidade:** Esperamos que projetos mais populares tendam a apresentar melhor qualidade interna, pois são mais revisados e atraem contribuições qualificadas.
-- **Maturidade x Qualidade:** Projetos mais antigos devem mostrar evolução positiva nas métricas de qualidade devido à refatoração e maturação do código.
-- **Tamanho x Qualidade:** Projetos maiores (mais LOC) podem apresentar maior acoplamento (CBO) e menor coesão (LCOM), devido à complexidade.
-- **Atividade x Qualidade:** Projetos com mais releases tendem a ter processos mais ativos de evolução e, possivelmente, melhor qualidade.
+- **Popularidade x Qualidade:** Projetos populares são mais revisados e, portanto, devem apresentar melhores métricas de qualidade interna.
+- **Maturidade x Qualidade:** A evolução ao longo do tempo favorece refatorações e aprimoramentos, resultando em melhor qualidade nos projetos mais antigos.
+- **Tamanho x Qualidade:** O aumento da complexidade, medido em LOC, tende a dificultar a modularidade e coesão, elevando métricas como CBO e LCOM.
+- **Atividade x Qualidade:** Projetos com maior número de releases refletem maior dinamismo e potencial para práticas de engenharia mais eficazes.
+
+Essas hipóteses guiaram tanto a coleta quanto a análise dos dados, servindo como referência para avaliação dos resultados.
 
 ---
 
@@ -91,20 +91,24 @@ Antes da análise dos dados, elaboramos as seguintes hipóteses informais:
 
 ### 5.1 Distribuição das Métricas de Qualidade
 
-Antes de analisar as correlações, examinamos a distribuição das métricas de qualidade para entender seu comportamento geral:
+Iniciamos os resultados examinando como as métricas de qualidade se distribuem entre os repositórios selecionados. Observa-se que o CBO médio se concentra em valores baixos, mas com cauda longa, indicando alguns projetos com alto acoplamento e complexidade.
 
-![Distribuição da métrica CBO_MEAN - observa-se uma concentração em valores baixos com cauda longa](https://hist_cbo_mean_bruto.png)
+![Distribuição da métrica CBO_MEAN - observa-se uma concentração em valores baixos com cauda longa](scripts/figs/hist_cbo_mean_bruto.png)
+
+No caso do DIT médio, há uma concentração entre 1.0 e 2.5, sugerindo que a maioria dos projetos possui hierarquias de herança relativamente rasas, mas com alguns exemplos mais profundos.
 
 *Distribuição da métrica DIT_MEAN - mostra concentração em valores entre 1.0 e 2.5*  
-![Distribuição da métrica DIT_MEAN](https://hist_dit_mean_bruto.png)
+![Distribuição da métrica DIT_MEAN](scripts/figs/hist_dit_mean_bruto.png)
 
-![Distribuição da métrica LCOM_MEAN - apresenta alta concentração próximo a zero com outliers significativos](https://hist_lcom_mean_bruto.png)
+Já o LCOM apresenta alta concentração próxima a zero, mas também alguns outliers expressivos, reforçando o desafio de manter coesão à medida que os projetos crescem.
 
-As distribuições das variáveis de processo também foram transformadas logaritmicamente para melhor visualização:
+![Distribuição da métrica LCOM_MEAN - apresenta alta concentração próximo a zero com outliers significativos](scripts/figs/hist_lcom_mean_bruto.png)
 
-![Distribuição de log_stars após transformação logarítmica](https://hist_log_stars.png)
+As variáveis de processo foram transformadas logarítmicamente para permitir comparações mais justas e visualizações mais claras — por exemplo:
 
-![Distribuição de log_age após transformação logarítmica](https://hist_log_age.png)
+![Distribuição de log_stars após transformação logarítmica](scripts/figs/hist_log_stars.png)
+
+![Distribuição de log_age após transformação logarítmica](scripts/figs/hist_log_age.png)
 
 ---
 
@@ -112,23 +116,25 @@ As distribuições das variáveis de processo também foram transformadas logari
 
 #### Popularidade vs CBO
 
-![Relação entre Popularidade (estrelas) e CBO_MEAN - dados brutos com outliers](https://stars_vs_cbo_mean_bruto.png)
+A relação entre popularidade (estrelas) e acoplamento (CBO) mostrou-se mais complexa do que o esperado. Embora exista uma leve tendência positiva, os dados apresentam grande dispersão e muitos outliers, evidenciando que projetos populares podem ter tanto baixo quanto alto acoplamento.
 
-![Relação entre log(Popularidade) e CBO_MEAN - após transformação logarítmica](https://log_stars_vs_cbo_mean_log.png)
+![Relação entre Popularidade (estrelas) e CBO_MEAN - dados brutos com outliers](scripts/figs/stars_vs_cbo_mean_bruto.png)
 
-A análise da relação entre popularidade e acoplamento (CBO) mostra uma dispersão significativa dos dados. Embora exista uma ligeira tendência positiva, a presença de outliers é marcante. Repositórios com alto número de estrelas apresentam valores de CBO variando amplamente, sugerindo que a popularidade não é um indicativo consistente de baixo acoplamento.
+O uso da escala logarítmica permite observar que, mesmo entre projetos com popularidade similar, há grande variação no CBO, reforçando a ideia de que popularidade não é indicativo direto de qualidade estrutural.
+
+![Relação entre log(Popularidade) e CBO_MEAN - após transformação logarítmica](scripts/figs/log_stars_vs_cbo_mean_log.png)
 
 #### Popularidade vs DIT
 
-![Relação entre log(Popularidade) e DIT_MEAN](https://log_stars_vs_dit_mean_log.png)
+Ao analisar a profundidade da árvore de herança (DIT) em função da popularidade, notamos que os valores se concentram em faixas estreitas, sem relação estatística significativa com o número de estrelas.
 
-A profundidade da árvore de herança (DIT) mostra pouca correlação com a popularidade. Os valores se concentram principalmente entre 1.0 e 2.5, independentemente do número de estrelas.
+![Relação entre log(Popularidade) e DIT_MEAN](scripts/figs/log_stars_vs_dit_mean_log.png)
 
 #### Popularidade vs LCOM
 
-![Relação entre Popularidade (estrelas) e LCOM_MEAN - dados brutos com outliers](https://stars_vs_lcom_mean_bruto.png)
+A falta de coesão (LCOM) apresentou os outliers mais extremos em relação à popularidade, indicando que projetos muito populares podem tanto ser altamente coesos quanto extremamente dispersos, dependendo de fatores arquiteturais e de equipe.
 
-A falta de coesão (LCOM) apresenta os outliers mais extremos em relação à popularidade. Projetos muito populares podem apresentar tanto valores muito baixos quanto muito altos de LCOM, indicando que fatores além da popularidade influenciam significativamente esta métrica.
+![Relação entre Popularidade (estrelas) e LCOM_MEAN - dados brutos com outliers](scripts/figs/stars_vs_lcom_mean_bruto.png)
 
 ---
 
@@ -136,25 +142,25 @@ A falta de coesão (LCOM) apresenta os outliers mais extremos em relação à po
 
 #### Maturidade vs CBO
 
-![Relação entre Maturidade (anos) e CBO_MEAN](https://age_vs_cbo_mean_bruto.png)
+Projetos mais antigos mostraram maior variação nos valores de CBO, sugerindo que o tempo pode levar tanto a aprimoramentos quanto ao acúmulo de complexidade e acoplamento, dependendo do histórico de evolução do projeto.
 
-A maturidade dos repositórios mostra uma relação complexa com o acoplamento. Projetos mais antigos tendem a apresentar maior variação nos valores de CBO, sugerindo diferentes estratégias evolutivas ao longo do tempo.
+![Relação entre Maturidade (anos) e CBO_MEAN](scripts/figs/age_vs_cbo_mean_bruto.png)
 
 #### Maturidade vs DIT
 
-![Relação entre Maturidade (anos) e DIT_MEAN - dados brutos](https://age_vs_dit_mean_bruto.png)
+A evolução arquitetural se manifesta na tendência de projetos maduros apresentarem árvores de herança ligeiramente mais profundas, o que pode refletir tanto refatorações positivas quanto acúmulo de estruturas complexas.
 
-![Relação entre log(Maturidade) e DIT_MEAN - após transformação logarítmica](https://log_age_vs_dit_mean_log.png)
+![Relação entre Maturidade (anos) e DIT_MEAN - dados brutos](scripts/figs/age_vs_dit_mean_bruto.png)
 
-A profundidade da árvore de herança mostra uma tendência interessante: projetos mais maduros tendem a apresentar valores de DIT ligeiramente mais altos. Isso pode indicar um processo de refatoração e aprofundamento das hierarquias de classe ao longo do tempo.
+![Relação entre log(Maturidade) e DIT_MEAN - após transformação logarítmica](scripts/figs/log_age_vs_dit_mean_log.png)
 
 #### Maturidade vs LCOM
 
-![Relação entre Maturidade (anos) e LCOM_MEAN](https://age_vs_lcom_mean_bruto.png)
+No caso da coesão, não foi encontrada relação forte com a idade do projeto. Projetos de diferentes idades apresentam ampla variação nos valores de LCOM, sugerindo ser uma métrica sensível a fatores específicos de design e organização do código.
 
-![Relação entre log(Maturidade) e LCOM_MEAN](https://log_age_vs_lcom_mean_log.png)
+![Relação entre Maturidade (anos) e LCOM_MEAN](scripts/figs/age_vs_lcom_mean_bruto.png)
 
-A falta de coesão apresenta a relação mais fraca com a maturidade. Projetos de todas as idades mostram ampla variação nos valores de LCOM, sugerindo que essa métrica é influenciada por fatores mais específicos do design do que pela idade do projeto.
+![Relação entre log(Maturidade) e LCOM_MEAN](scripts/figs/log_age_vs_lcom_mean_log.png)
 
 ---
 
@@ -162,53 +168,35 @@ A falta de coesão apresenta a relação mais fraca com a maturidade. Projetos d
 
 #### Tamanho vs DIT
 
-![Relação entre Tamanho (LOC) e DIT_MEAN](https://loc_sum_vs_dit_mean_bruto.png)
+Projetos maiores tendem a apresentar estruturas de herança mais complexas e profundas, possivelmente como resposta à necessidade de organizar um volume maior de funcionalidades e abstrações.
 
-O tamanho do projeto mostra correlação positiva com a profundidade da árvore de herança. Projetos maiores tendem a ter estruturas de herança mais complexas, possivelmente devido à necessidade de maior organização e abstração.
+![Relação entre Tamanho (LOC) e DIT_MEAN](scripts/figs/loc_sum_vs_dit_mean_bruto.png)
 
 #### Tamanho vs LCOM
 
-![Relação entre Tamanho (LOC) e LCOM_MEAN](https://loc_sum_vs_lcom_mean_bruto.png)
+A relação entre tamanho e falta de coesão é a mais forte e evidente do estudo. Projetos extensos apresentam significativamente maior LCOM, confirmando a hipótese de que a complexidade estrutural dificulta a manutenção de coesão entre métodos e classes.
 
-A relação mais forte observada é entre tamanho e falta de coesão. Projetos maiores apresentam significativamente maior LCOM, corroborando a hipótese de que a complexidade estrutural dificulta a manutenção da coesão entre métodos.
+![Relação entre Tamanho (LOC) e LCOM_MEAN](scripts/figs/loc_sum_vs_lcom_mean_bruto.png)
 
 ---
 
 ## Discussão
 
-Os resultados revelam nuances importantes nas relações entre características de processo e qualidade interna:
+Os resultados deste estudo revelam nuances profundas nas relações entre características de processo e qualidade interna dos projetos Java open-source. A popularidade, ao contrário do que se poderia supor, não se traduz em qualidade arquitetural superior: projetos amplamente conhecidos podem apresentar problemas significativos de acoplamento e coesão, enquanto outros menos populares mantêm padrões elevados de engenharia.
 
-- **Popularidade e Qualidade:** Contrariando a hipótese inicial, a popularidade não mostrou correlação forte com melhores métricas de qualidade. Isso sugere que fatores como utilidade da aplicação, marketing ou timing de lançamento podem ser mais determinantes para o sucesso de um repositório do que propriamente a qualidade arquitetural interna.
+A maturidade do projeto, medida pela idade, carrega ambiguidade. Por um lado, o tempo permite refatorações, aprimoramentos e acúmulo de conhecimento; por outro, pode também implicar em dívidas técnicas, estruturas rígidas e acoplamento indesejado. O tamanho do projeto se destaca como o fator de maior impacto: sistemas extensos enfrentam desafios crescentes de modularidade e coesão, evidenciados pelo aumento de LCOM e DIT. Isso reforça a necessidade de práticas constantes de revisão, refatoração e divisão modular, especialmente em projetos que crescem rapidamente ou acumulam funcionalidades ao longo do tempo.
 
-- **Maturidade e Qualidade:** Projetos mais antigos mostraram tendência a maior profundidade de herança (DIT), o que pode ser interpretado de duas formas: como evolução arquitetural positiva através de refatoração, ou como acumulação de complexidade desnecessária. A falta de correlação forte com CBO e LCOM sugere que a maturidade por si só não garante melhor qualidade.
+Do ponto de vista prático, esses achados sugerem que equipes de desenvolvimento devem manter um olhar crítico e contínuo sobre as métricas de qualidade interna, adotando-as como ferramentas essenciais para a tomada de decisão e evolução do projeto. Não basta confiar no sucesso externo ou na popularidade para garantir qualidade. Projetos grandes e maduros exigem estratégias específicas de modularização, organização e revisão arquitetural.
 
-- **Tamanho e Qualidade:** A forte correlação positiva entre tamanho e LCOM confirma a hipótese inicial de que projetos maiores enfrentam desafios significativos de coesão. Esta é talvez a descoberta mais consistente do estudo, reforçando a importância de práticas de modularização em projetos de grande escala.
-
-**Implicações Práticas:**
-- Desenvolvedores devem estar cientes que popularidade não equivale a qualidade técnica.
-- Projetos grandes exigem atenção especial à coesão e modularidade.
-- A maturidade traz complexidade arquitetural que deve ser gerenciada conscientemente.
-- Métricas de qualidade devem ser monitoradas continuamente, independentemente do sucesso do projeto.
-
-**Limitações do Estudo:**
-- A análise focou apenas em métricas estruturais clássicas.
-- Fatores qualitativos como design patterns e práticas de desenvolvimento não foram considerados.
-- A amostra, embora grande, representa apenas projetos Java populares no GitHub.
+Entre as limitações do estudo, destacam-se o foco em métricas estruturais clássicas, sem análise de fatores qualitativos como padrões de projeto, cultura organizacional e práticas de desenvolvimento, além do recorte apenas em projetos populares no GitHub, o que pode deixar de fora outras dinâmicas relevantes de projetos menos conhecidos ou privados.
 
 ---
 
 ## Conclusão
 
-Este estudo demonstra que as relações entre características de processo e qualidade interna em repositórios Java são complexas e multifacetadas. Enquanto o tamanho mostra correlação evidente com a falta de coesão, a popularidade e maturidade apresentam relações mais sutis com as métricas de qualidade.
+Ao final do estudo, conclui-se que as relações entre processo de desenvolvimento e qualidade interna são complexas e multifatoriais. Popularidade e maturidade influenciam menos do que se imaginava, enquanto o tamanho do projeto se mostra o principal desafio para a manutenção da coesão e modularidade. Métricas como CBO, DIT e LCOM são fundamentais para mapear e monitorar a evolução dos sistemas, mas devem ser complementadas por análises qualitativas e práticas colaborativas de engenharia.
 
-As implicações práticas sugerem que equipes de desenvolvimento devem:
-
-- Não assumir que projetos populares são automaticamente bem arquitetados.
-- Dar atenção especial à coesão em projetos de grande porte.
-- Gerenciar conscientemente a complexidade arquitetural em projetos maduros.
-- Utilizar métricas de qualidade como ferramentas complementares, não como únicos indicadores.
-
-Este trabalho contribui para a compreensão das dinâmicas de qualidade em projetos open-source e destaca a importância de uma abordagem holística que considere tanto aspectos técnicos quanto sociais no desenvolvimento de software.
+Este trabalho reforça a importância de uma abordagem integrada, que combine análise técnica, estatística e filosófica, promovendo sistemas eficientes, legíveis e sustentáveis. Espera-se que os resultados sirvam de alerta e inspiração para equipes preocupadas não apenas com o sucesso externo dos seus projetos, mas principalmente com sua qualidade interna e longevidade.
 
 ---
 
