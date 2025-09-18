@@ -1,4 +1,4 @@
-#  – Estudo das Características de Qualidade de Sistemas Java
+# Estudo das Características de Qualidade de Sistemas Java
 
 **Curso:** Engenharia de Software  
 **Disciplina:** Laboratório de Experimentação de Software  
