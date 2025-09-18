@@ -1,0 +1,56 @@
+# Compilação Java
+*.class
+*.jar
+*.war
+*.ear
+
+# Logs
+*.log
+
+# Diretórios de build
+/target/
+/build/
+/out/
+
+# IDEs e editores
+/.idea/
+/.vscode/
+/*.iml
+
+# Sistema operacional
+.DS_Store
+Thumbs.db
+
+# Ambiente virtual Python
+venv/
+.env/
+.venv/
+
+# Diretórios e arquivos de dados, métricas e artefatos grandes (fora do scripts/)
+data/
+metrics/
+metrics-junit4/
+ck-tool/
+junit4.zip
+junit4-main/
+figs/
+summaries/
+repos.txt
+
+# Diretórios/Arquivos grandes e temporários em scripts/
+scripts/all_metrics.csv
+scripts/all_metrics_1000.csv
+scripts/correlations.txt
+scripts/temp_repo/
+scripts/figs/
+scripts/metrics/
+scripts/zips/
+scripts/top_java_repos.csv
+scripts/repos.txt
+
+# Permite scripts Python, mas ignora arquivos de dados/resultados
+!scripts/*.py
+
+# Ignora qualquer arquivo temporário de sistema
+*.swp
+*.swo
